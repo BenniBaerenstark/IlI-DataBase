@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/view_report_attack.php?*
@@ -90,11 +90,11 @@
 
     var ress = new Array()
     const RFE = 0
-    const RKR = 0
-    const RFB = 0
-    const ROR = 0
-    const RFZ = 0
-    const RGO = 0
+    const RKR = 1
+    const RFB = 2
+    const ROR = 3
+    const RFZ = 4
+    const RGO = 5
 
     var url = window.location.toString()
     var e;
@@ -137,12 +137,19 @@
         info[att] = elements[4].innerText.match(/\d/g).join("")
         info[def] = elements[5].innerText.match(/\d/g).join("")
         info[pKlasse] = elements[6].innerText
+        ress[RGO] = elements[elements.length - 1].innerText
+        ress[RFZ] = elements[elements.length - 3].innerText
+        ress[ROR] = elements[elements.length - 5].innerText
+        ress[RFB] = elements[elements.length - 7].innerText
+        ress[RKR] = elements[elements.length - 9].innerText
+        ress[RFE] = elements[elements.length - 11].innerText
 
         for (var i = 7; i < elements.length-6; i++){
             var str = elements[i].innerText
             var key = str.replace(/[0-9]/g, '')
             if (str.match(/\d/g) != null) var number = str.match(/\d/g).join("")
             build[GDZ] = ""
+            research[KV] = ""
             switch(key){
                 case "Hauptquartier ": build[HQ] = number; break;
                 case "Bauzentrale " : build[BZ] = number; break;
@@ -207,7 +214,7 @@
             }
         }
          authenticate().then(loadClient).then(execute)
-
+/*
         console.log("Besitzer: " + info[0] + "\n"
              + "Allianz:  " + info[1] + "\n"
              + "Rasse:    " + info[2] + "\n"
@@ -243,7 +250,7 @@
              + "Kreditinstitut " + build[KI] + "\n"
              + "Werkstatt " + build[WS] + "\n"
              + "Geheimdienstzentrum " + build[GDZ] + "\n"
-             )
+             )*/
     }
 
 
@@ -266,6 +273,7 @@
         data = data.concat(info)
         data = data.concat(build)
         data = data.concat(research)
+        data = data.concat(ress)
     return gapi.client.sheets.spreadsheets.values.append({
       "spreadsheetId": "1YBigAchu5Tm20hi1FCACOhpTVGDkP75V840NZz1EPYI",
       "range": "A1",
