@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/view_report_attack.php?*
@@ -14,12 +14,15 @@
     'use strict';
 
     var info = new Array()
-    const besitzer = 0
-    const allianz = 1
-    const rasse = 2
-    const att = 3
-    const def = 4
-    const pKlasse = 5
+    const gala = 0
+    const sys = 1
+    const planet = 2
+    const besitzer = 3
+    const allianz = 4
+    const rasse = 5
+    const att = 6
+    const def = 7
+    const pKlasse = 8
 
     var build = new Array()
     const HQ = 0 // Hauptquartier
@@ -113,7 +116,10 @@
     }
 
     function getSpioInfo(){
-        authenticate().then(loadClient).then(execute)
+        var koords = document.getElementsByTagName("th")[0].innerText.match(/\d+/g).map(Number)
+        info[gala] = koords[0]
+        info[sys] = koords[1]
+        info[planet] = koords[2]
         var elements = document.getElementsByTagName("td")
         info[besitzer] = elements[0].innerText
         info[allianz] = elements[2].innerText
@@ -156,9 +162,41 @@
                 case "Kreditinstitut " : build[KI] = number; break;
                 case "Werkstatt " : build[WS] = number; break;
                 case "Geheimdienstzentrum " : build[GDZ] = number; break;
+                case "Spionage " : research[SPIO] = number; break;
+                case "Erweiterte Spionage " : research[ESPIO] = number; break;
+                case "Signalübertragung " : research[SU] = number; break;
+                case "Multiples Bauen " : research[MB] = number; break;
+                case "Interstellarer Handel " : research[IH] = number; break;
+                case "Schiffskonstruktion " : research[SK] = number; break;
+                case "Taktische Kriegsführung " : research[TK] = number; break;
+                case "Tarntechnologie " : research[TT] = number; break;
+                case "Ionisation " : research[IONI] = number; break;
+                case "Verbrennungstechnik " : research[VBT] = number; break;
+                case "Metallurgie " : research[MT] = number; break;
+                case "Energiebündelung " : research[EB] = number; break;
+                case "Ladedocks " : research[LD] = number; break;
+                case "Nanotechnologie " : research[NT] = number; break;
+                case "Plasmaforschung " : research[PL] = number; break;
+                case "Hochexplosive Substanzen " : research[HE] = number; break;
+                case "Schildforschung " : research[SF] = number; break;
+                case "Erweiterte Legierungen " : research[EL] = number; break;
+                case "Biotechnologie " : research[BIO] = number; break;
+                case "Strahlenforschung " : research[ST] = number; break;
+                case "Hochtechnologie " : research[HT] = number; break;
+                case "Raketenforschung " : research[RAK] = number; break;
+                case "NanoSynthese " : research[NS] = number; break;
+                case "Antimaterietechnologie " : research[AM] = number; break;
+                case "Teleporttechnologie " : research[TELE] = number; break;
+                case "Nukleartriebwerke " : research[NUK] = number; break;
+                case "Ionisationsantrieb " : research[ION] = number; break;
+                case "Hyperraumantrieb " : research[HYP] = number; break;
+                case "Gravitationsantrieb " : research[GTY] = number; break;
+                case "Kolonieverwaltung " : research[KV] = number; break;
 
             }
         }
+         authenticate().then(loadClient).then(execute)
+        /*
         console.log("Besitzer: " + info[0] + "\n"
              + "Allianz:  " + info[1] + "\n"
              + "Rasse:    " + info[2] + "\n"
@@ -194,7 +232,7 @@
              + "Kreditinstitut " + build[KI] + "\n"
              + "Werkstatt " + build[WS] + "\n"
              + "Geheimdienstzentrum " + build[GDZ] + "\n"
-             )
+             )*/
     }
 
 
@@ -216,6 +254,7 @@
         data[0] = Date.now()/1000
         data = data.concat(info)
         data = data.concat(build)
+        data = data.concat(research)
     return gapi.client.sheets.spreadsheets.values.append({
       "spreadsheetId": "1YBigAchu5Tm20hi1FCACOhpTVGDkP75V840NZz1EPYI",
       "range": "A1",
