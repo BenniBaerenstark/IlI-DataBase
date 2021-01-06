@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/view_report_attack.php?*
 // @match        https://last-war.de/planetenscanner_view.php?*
+// @match        https://last-war.de/view/content/new_window/observationen_view.php?*
 // @grant        none
 // @require      https://apis.google.com/js/api.js
 // ==/UserScript==
@@ -13,7 +14,7 @@
 (function() {
     'use strict';
 
-    var info = new Array()
+    var info = new Array(9)
     const gala = 0
     const sys = 1
     const planet = 2
@@ -24,7 +25,7 @@
     const def = 7
     const pKlasse = 8
 
-    var build = new Array()
+    var build = new Array(29)
     const HQ = 0 // Hauptquartier
 	const BZ = 1 // Bauzentrale
 	const FZ = 2 // Forschungszentrale
@@ -55,7 +56,7 @@
 	const WS = 27 // Werkstatt
 	const GDZ = 28 // Geheimdienstzentrum
 
-    var research = new Array()
+    var research = new Array(30)
 	const SPIO = 0 // Spionage
 	const ESPIO = 1 // Erweiterte Spionage
 	const SU = 2 // Signalübertragung
@@ -115,6 +116,15 @@
         e.parentNode.removeChild(e);
     }
 
+    if (url.includes("observationen_view")){
+        parseButton.style = "float: right;"
+        e = document.getElementById("table")
+        var ec = document.getElementById("tableOS")
+        parseButton.innerHTML = "Obervationsbericht parsen";
+        parseButton.onclick = getSpioInfo;
+        e.insertBefore(parseButton,ec)
+    }
+
     function getSpioInfo(){
         var koords = document.getElementsByTagName("th")[0].innerText.match(/\d+/g).map(Number)
         info[gala] = koords[0]
@@ -132,6 +142,7 @@
             var str = elements[i].innerText
             var key = str.replace(/[0-9]/g, '')
             if (str.match(/\d/g) != null) var number = str.match(/\d/g).join("")
+            build[GDZ] = ""
             switch(key){
                 case "Hauptquartier ": build[HQ] = number; break;
                 case "Bauzentrale " : build[BZ] = number; break;
@@ -184,11 +195,11 @@
                 case "Strahlenforschung " : research[ST] = number; break;
                 case "Hochtechnologie " : research[HT] = number; break;
                 case "Raketenforschung " : research[RAK] = number; break;
-                case "NanoSynthese " : research[NS] = number; break;
+                case "Nano Synthese " : research[NS] = number; break;
                 case "Antimaterietechnologie " : research[AM] = number; break;
                 case "Teleporttechnologie " : research[TELE] = number; break;
                 case "Nukleartriebwerke " : research[NUK] = number; break;
-                case "Ionisationsantrieb " : research[ION] = number; break;
+                case "Ionentriebwerke " : research[ION] = number; break;
                 case "Hyperraumantrieb " : research[HYP] = number; break;
                 case "Gravitationsantrieb " : research[GTY] = number; break;
                 case "Kolonieverwaltung " : research[KV] = number; break;
@@ -196,7 +207,7 @@
             }
         }
          authenticate().then(loadClient).then(execute)
-        /*
+
         console.log("Besitzer: " + info[0] + "\n"
              + "Allianz:  " + info[1] + "\n"
              + "Rasse:    " + info[2] + "\n"
@@ -232,7 +243,7 @@
              + "Kreditinstitut " + build[KI] + "\n"
              + "Werkstatt " + build[WS] + "\n"
              + "Geheimdienstzentrum " + build[GDZ] + "\n"
-             )*/
+             )
     }
 
 
