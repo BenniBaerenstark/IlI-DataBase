@@ -212,6 +212,10 @@
     }
 
     function execute() {
+        var data = new Array()
+        data[0] = Date.now()/1000
+        data = data.concat(info)
+        data = data.concat(build)
     return gapi.client.sheets.spreadsheets.values.append({
       "spreadsheetId": "1YBigAchu5Tm20hi1FCACOhpTVGDkP75V840NZz1EPYI",
       "range": "A1",
@@ -221,13 +225,8 @@
       "responseValueRenderOption": "FORMATTED_VALUE",
       "valueInputOption": "USER_ENTERED",
       "resource": {
-        "values": [
-          [
-            1
-          ],
-          [
-            2
-          ]
+        "values": [data
+
         ]
       }
     })
