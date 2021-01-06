@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/view_report_attack.php?*
@@ -137,12 +137,14 @@
         info[att] = elements[4].innerText.match(/\d/g).join("")
         info[def] = elements[5].innerText.match(/\d/g).join("")
         info[pKlasse] = elements[6].innerText
-        ress[RGO] = elements[elements.length - 1].innerText
-        ress[RFZ] = elements[elements.length - 3].innerText
-        ress[ROR] = elements[elements.length - 5].innerText
-        ress[RFB] = elements[elements.length - 7].innerText
-        ress[RKR] = elements[elements.length - 9].innerText
-        ress[RFE] = elements[elements.length - 11].innerText
+        if(elements.length > 7){
+            ress[RGO] = elements[elements.length - 1].innerText
+            ress[RFZ] = elements[elements.length - 3].innerText
+            ress[ROR] = elements[elements.length - 5].innerText
+            ress[RFB] = elements[elements.length - 7].innerText
+            ress[RKR] = elements[elements.length - 9].innerText
+            ress[RFE] = elements[elements.length - 11].innerText
+        }
 
         for (var i = 7; i < elements.length-6; i++){
             var str = elements[i].innerText
