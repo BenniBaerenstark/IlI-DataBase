@@ -145,13 +145,12 @@
             ress[RKR] = elements[elements.length - 9].innerText
             ress[RFE] = elements[elements.length - 11].innerText
         }
-
+	build[GDZ] = ""
+        research[KV] = ""
         for (var i = 7; i < elements.length-6; i++){
             var str = elements[i].innerText
             var key = str.replace(/[0-9]/g, '')
             if (str.match(/\d/g) != null) var number = str.match(/\d/g).join("")
-            build[GDZ] = ""
-            research[KV] = ""
             switch(key){
                 case "Hauptquartier ": build[HQ] = number; break;
                 case "Bauzentrale " : build[BZ] = number; break;
