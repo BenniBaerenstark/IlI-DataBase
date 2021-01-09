@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  send Data from LW to DataBase
 // @author       Revan
-// @match        https://last-war.de/view_report_attack.php?*
 // @match        https://last-war.de/planetenscanner_view.php?*
 // @match        https://last-war.de/view/content/new_window/observationen_view.php?*
+// @match        https://last-war.de/view_report_attack.php?*
+// @match        https://last-war.de/planetenscanner_view_public.php?*
 // @grant        none
 // @require      https://apis.google.com/js/api.js
 // ==/UserScript==
@@ -100,7 +101,7 @@
     var e;
     var parseButton = document.createElement('button');
 
-    if (url.includes("scanner")){
+    if (url.includes("planetenscanner_view.php")){
         e = document.getElementById("clickForParsURL")
         parseButton.innerHTML = "Spiobericht parsen";
         parseButton.onclick = getSpioInfo;
@@ -108,18 +109,28 @@
         e.parentNode.removeChild(e);
 
     }
+    if (url.includes("planetenscanner_view_public.php")){
+        parseButton.style = "float: right;"
+        e = document.getElementById("table")
+        var ec = document.getElementById("tableOS")
+        parseButton.innerHTML = "Spiobericht parsen";
+        parseButton.onclick = getSpioInfo;
+        e.insertBefore(parseButton,ec)
+    }
 
      if (url.includes("attack")){
         e = document.getElementById("clickForParsURL")
+        e.click()
         parseButton.innerHTML = "Kampfbericht parsen";
         e.parentNode.insertBefore(parseButton, e);
         e.parentNode.removeChild(e);
+        parseButton.onclick = getKBInfo;
     }
 
     if (url.includes("observationen_view")){
         parseButton.style = "float: right;"
         e = document.getElementById("table")
-        var ec = document.getElementById("tableOS")
+        ec = document.getElementById("tableOS")
         parseButton.innerHTML = "Obervationsbericht parsen";
         parseButton.onclick = getSpioInfo;
         e.insertBefore(parseButton,ec)
@@ -127,9 +138,9 @@
 
     function getSpioInfo(){
         var koords = document.getElementsByTagName("th")[0].innerText.match(/\d+/g).map(Number)
-        info[gala] = koords[0]
-        info[sys] = koords[1]
-        info[planet] = koords[2]
+        info[gala] = koords[koords.length-3]
+        info[sys] = koords[koords.length-2]
+        info[planet] = koords[koords.length-1]
         var elements = document.getElementsByTagName("td")
         info[besitzer] = elements[0].innerText
         info[allianz] = elements[2].innerText
@@ -145,12 +156,14 @@
             ress[RKR] = elements[elements.length - 9].innerText
             ress[RFE] = elements[elements.length - 11].innerText
         }
-	build[GDZ] = ""
+
+        build[GDZ] = ""
         research[KV] = ""
         for (var i = 7; i < elements.length-6; i++){
             var str = elements[i].innerText
             var key = str.replace(/[0-9]/g, '')
             if (str.match(/\d/g) != null) var number = str.match(/\d/g).join("")
+            
             switch(key){
                 case "Hauptquartier ": build[HQ] = number; break;
                 case "Bauzentrale " : build[BZ] = number; break;
@@ -253,7 +266,126 @@
              + "Geheimdienstzentrum " + build[GDZ] + "\n"
              )*/
     }
+    var kb
+    function getKBInfo(){
+        kb = new Array()
+        const time = 0
+        const aBase_G = 1
+        const aBase_S = 2
+        const aBase_P = 3
+        const aAlly = 4
+        const aName = 5
+//        const aTak = 7
+//        const aLightA = 8
+//        const aLightD = 9
+//        const aLightA_S = 10
+//        const aLightD_S = 11
+//        const aMidA = 12
+//        const aMidD = 13
+//        const aMidA_S =14
+//        const aMidD_S =15
+//        const aHeavyA = 16
+//        const aHeavyD = 17
+//        const aHeavyA_S = 18
+//        const aHeavyD_S = 19
+//        const aTotA = 20
+//        const aTotS = 21
+        const dBase_G = 6
+        const dBase_S = 7
+        const dBase_P = 8
+        const dAlly = 9
+        const dName = 10
+//        const dDefA = 27
+//        const dDefD = 28
+//        const dDefA_S = 29
+//        const dDefD_S = 30
+//        const dDef_B = 31
+//        const dLightA = 32
+//        const dLightD = 33
+//        const dLightA_S = 34
+//        const dLightD_S = 35
+//        const dMidA = 36
+//        const dMidD = 37
+//        const dMidA_S = 38
+//        const dMidD_S = 39
+//        const dHeavyA = 40
+//        const dHeavyD = 41
+//        const dHeavyA_S = 42
+//        const dHeavyD_S = 43
+//        const dTotA = 44
+//        const dTotS = 45
+        const rFe = 11
+        const rKr = 12
+        const rFb = 13
+        const rOr = 14
+        const rFz = 15
+        const rGo = 16
+        const paredsKB_URL = 17
 
+
+        kb[time] = document.getElementsByTagName("b")[4].innerText
+        e = document.getElementsByTagName("td")
+        var s = e[12].innerText
+        var attKords = getKoords(s)
+        kb[aBase_G] = attKords[0]
+        kb[aBase_S] = attKords[1]
+        kb[aBase_P] = attKords[2]
+        kb[aAlly] = getAllyTag(s)
+        kb[aName] = getName(s)
+        s = e[13].innerText
+        var defKords = getKoords(s)
+        kb[dBase_G] = defKords[0]
+        kb[dBase_S] = defKords[1]
+        kb[dBase_P] = defKords[2]
+        kb[dAlly] = getAllyTag(s)
+        kb[dName] = getName(s)
+        kb[paredsKB_URL] = document.getElementById("inputUrlPars").value
+        var posFe = getPosFe() + 7
+        kb[rFe] = e[posFe].innerText.replace(".","")
+        kb[rKr] = e[posFe+1].innerText.replace(".","")
+        kb[rFb] = e[posFe+2].innerText.replace(".","")
+        kb[rOr] = e[posFe+3].innerText.replace(".","")
+        kb[rFz] = e[posFe+4].innerText.replace(".","")
+        kb[rGo] = parseInt(e[posFe+5].innerText.replace(".",""),10)
+        // Startbasis/Angreifer 12
+        // Zielbasis 13
+        // Att/Def Tot Angreifer 123
+        // Att/Def Tot Verteidiger 130
+        // Bonus Bunker 129
+        // Att schwer value 98
+        // att schwer prozent 103
+        // " Roheisen" + 7 = Fe
+        // " Roheisen" - 9 = geplündert
+        //console.log(kb)
+        authenticate().then(loadClient).then(executeKB)
+    }
+    function getName(str){
+        var posname = str.indexOf("]")+2
+        return str.substring(posname,str.length-1)
+    }
+
+    function getAllyTag(str){
+        var a = str.indexOf("[")
+        var at = str.lastIndexOf("[")
+        if(a == at){
+            var b = str.indexOf("]")
+            var bt = str.lastIndexOf("]")
+            if(b == bt){
+                return str.substring(a,b+1)
+            }
+        }
+        return ""
+    }
+    function getKoords(str){
+        var strKoords = str.match(/\dx\d{1,3}x\d{1,2}/gm)
+        return strKoords[0].match(/\d+/g).map(Number)
+    }
+    function getPosFe(){
+        var res = document.getElementsByTagName("td")
+        for (var i = 130; i < res.length; i++){
+            if(res[i].innerText.includes("Roheisen")) return i
+        }
+    }
 
     function authenticate() {
         return gapi.auth2.getAuthInstance()
@@ -285,6 +417,28 @@
       "valueInputOption": "USER_ENTERED",
       "resource": {
         "values": [data
+
+        ]
+      }
+    })
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+              },
+              function(err) { console.error("Execute error", err); });
+  }
+    function executeKB() {
+
+    return gapi.client.sheets.spreadsheets.values.append({
+      "spreadsheetId": "1YBigAchu5Tm20hi1FCACOhpTVGDkP75V840NZz1EPYI",
+      "range": "KB!A1",
+      "includeValuesInResponse": true,
+      "insertDataOption": "INSERT_ROWS",
+      "responseDateTimeRenderOption": "FORMATTED_STRING",
+      "responseValueRenderOption": "FORMATTED_VALUE",
+      "valueInputOption": "USER_ENTERED",
+      "resource": {
+        "values": [kb
 
         ]
       }
