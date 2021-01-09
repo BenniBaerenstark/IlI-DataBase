@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/planetenscanner_view.php?*
@@ -270,57 +270,60 @@
     function getKBInfo(){
         kb = new Array()
         const time = 0
+        //Atacker
         const aBase_G = 1
         const aBase_S = 2
         const aBase_P = 3
         const aAlly = 4
         const aName = 5
-//        const aTak = 7
-//        const aLightA = 8
-//        const aLightD = 9
-//        const aLightA_S = 10
-//        const aLightD_S = 11
-//        const aMidA = 12
-//        const aMidD = 13
-//        const aMidA_S =14
-//        const aMidD_S =15
-//        const aHeavyA = 16
-//        const aHeavyD = 17
-//        const aHeavyA_S = 18
-//        const aHeavyD_S = 19
-//        const aTotA = 20
-//        const aTotS = 21
-        const dBase_G = 6
-        const dBase_S = 7
-        const dBase_P = 8
-        const dAlly = 9
-        const dName = 10
-//        const dDefA = 27
-//        const dDefD = 28
-//        const dDefA_S = 29
-//        const dDefD_S = 30
-//        const dDef_B = 31
-//        const dLightA = 32
-//        const dLightD = 33
-//        const dLightA_S = 34
-//        const dLightD_S = 35
-//        const dMidA = 36
-//        const dMidD = 37
-//        const dMidA_S = 38
-//        const dMidD_S = 39
-//        const dHeavyA = 40
-//        const dHeavyD = 41
-//        const dHeavyA_S = 42
-//        const dHeavyD_S = 43
-//        const dTotA = 44
-//        const dTotS = 45
-        const rFe = 11
-        const rKr = 12
-        const rFb = 13
-        const rOr = 14
-        const rFz = 15
-        const rGo = 16
-        const paredsKB_URL = 17
+        const aTotA = 6
+        const aTotD = 7
+        const aTak = 8
+        const aLightA = 9
+        const aLightA_S = 10
+        const aLightD = 11
+        const aLightD_S = 12
+        const aMidA = 13
+        const aMidA_S = 14
+        const aMidD = 15
+        const aMidD_S =16
+        const aHeavyA = 17
+        const aHeavyA_S = 18
+        const aHeavyD = 19
+        const aHeavyD_S = 20
+        //Defender
+        const dBase_G = 21
+        const dBase_S = 22
+        const dBase_P = 23
+        const dAlly = 24
+        const dName = 25
+        const dTotA = 26
+        const dTotD = 27
+        const dDefA = 28
+        const dDefA_S = 29
+        const dDefD = 30
+        const dDefD_S = 31
+        const dDef_B = 32
+        const dLightA = 33
+        const dLightA_S = 34
+        const dLightD = 35
+        const dLightD_S = 36
+        const dMidA = 37
+        const dMidA_S = 38
+        const dMidD = 39
+        const dMidD_S = 40
+        const dHeavyA = 41
+        const dHeavyA_S = 42
+        const dHeavyD = 43
+        const dHeavyD_S = 44
+        //Ress
+        const rFe = 45
+        const rKr = 46
+        const rFb = 47
+        const rOr = 48
+        const rFz = 49
+        const rGo = 50
+        const paredsKB_URL = 51
 
 
         kb[time] = document.getElementsByTagName("b")[4].innerText
@@ -341,24 +344,86 @@
         kb[dName] = getName(s)
         kb[paredsKB_URL] = document.getElementById("inputUrlPars").value
         var posFe = getPosFe() + 7
-        kb[rFe] = e[posFe].innerText.replace(".","")
-        kb[rKr] = e[posFe+1].innerText.replace(".","")
-        kb[rFb] = e[posFe+2].innerText.replace(".","")
-        kb[rOr] = e[posFe+3].innerText.replace(".","")
-        kb[rFz] = e[posFe+4].innerText.replace(".","")
-        kb[rGo] = parseInt(e[posFe+5].innerText.replace(".",""),10)
-        // Startbasis/Angreifer 12
-        // Zielbasis 13
-        // Att/Def Tot Angreifer 123
-        // Att/Def Tot Verteidiger 130
-        // Bonus Bunker 129
-        // Att schwer value 98
-        // att schwer prozent 103
-        // " Roheisen" + 7 = Fe
-        // " Roheisen" - 9 = geplündert
-        //console.log(kb)
+        kb[rFe] = parseInt(e[posFe].innerText.replaceAll(".",""),10)
+        kb[rKr] = parseInt(e[posFe+1].innerText.replaceAll(".",""),10)
+        kb[rFb] = parseInt(e[posFe+2].innerText.replaceAll(".",""),10)
+        kb[rOr] = parseInt(e[posFe+3].innerText.replaceAll(".",""),10)
+        kb[rFz] = parseInt(e[posFe+4].innerText.replaceAll(".",""),10)
+        kb[rGo] = parseInt(e[posFe+5].innerText.replaceAll(".",""),10)
+
+        var attdef
+        var survProc
+        kb[aTak] = getAttDef(30)[0]
+        attdef = getAttDef(62)
+        kb[aLightA] = attdef[0]
+        kb[aLightD] = attdef[1]
+        survProc = getSurviveProc(67)
+        kb[aLightA_S] = survProc[0]
+        kb[aLightD_S] = survProc[1]
+        attdef = getAttDef(80)
+        kb[aMidA] = attdef[0]
+        kb[aMidD] = attdef[1]
+        survProc = getSurviveProc(85)
+        kb[aMidA_S] = survProc[0]
+        kb[aMidD_S] = survProc[1]
+        attdef = getAttDef(98)
+        kb[aHeavyA] = attdef[0]
+        kb[aHeavyD] = attdef[1]
+        survProc = getSurviveProc(103)
+        kb[aHeavyA_S] = survProc[0]
+        kb[aHeavyD_S] = survProc[1]
+        attdef = getAttDef(123)
+        kb[aTotA] = attdef[0]
+        kb[aTotD] = attdef[1]
+
+        attdef = getAttDef(42)
+        kb[dDefA] = attdef[0]
+        kb[dDefD] = attdef[1]
+        survProc = getSurviveProc(37)
+        kb[dDefA_S] = survProc[0]
+        kb[dDefD_S] = survProc[1]
+        kb[dDef_B] = s = e[129].innerText.match(/\d+/g).map(Number)[0] + "%"
+        attdef = getAttDef(73)
+        kb[dLightA] = attdef[0]
+        kb[dLightD] = attdef[1]
+        survProc = getSurviveProc(69)
+        kb[dLightA_S] = survProc[0]
+        kb[dLightD_S] = survProc[1]
+        attdef = getAttDef(91)
+        kb[dMidA] = attdef[0]
+        kb[dMidD] = attdef[1]
+        survProc = getSurviveProc(87)
+        kb[dMidA_S] = survProc[0]
+        kb[dMidD_S] = survProc[1]
+        attdef = getAttDef(109)
+        kb[dHeavyA] = attdef[0]
+        kb[dHeavyD] = attdef[1]
+        survProc = getSurviveProc(105)
+        kb[dHeavyA_S] = survProc[0]
+        kb[dHeavyD_S] = survProc[1]
+        attdef = getAttDef(130)
+        kb[dTotA] = attdef[0]
+        kb[dTotD] = attdef[1]
+
+        // console.log(kb)
         authenticate().then(loadClient).then(executeKB)
     }
+
+    function getSurviveProc(pos){
+        var s = e[pos].innerText
+        if(s.match(/\d+/g) ){
+            s = s.match(/\d+/g).map(Number)
+            return [s[0] + "%",s[1] + "%"]
+        }
+        return ["",""]
+    }
+
+    function getAttDef(pos){
+        var s = e[pos].innerText
+        if(s.match(/\d+/g) ) return s.replaceAll(".","").match(/\d+/g).map(Number)
+        return ["",""]
+    }
+
     function getName(str){
         var posname = str.indexOf("]")+2
         return str.substring(posname,str.length-1)
