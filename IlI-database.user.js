@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      1.0
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/planetenscanner_view.php?*
