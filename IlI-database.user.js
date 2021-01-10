@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IlI DataBase
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.01
 // @description  send Data from LW to DataBase
 // @author       Revan
 // @match        https://last-war.de/planetenscanner_view.php?*
@@ -467,7 +467,8 @@
 
     function execute() {
         var data = new Array()
-        data[0] = Date.now()/1000
+        var date = new Date()
+        data[0] = date.toLocaleDateString() + " " + date.toLocaleTimeString()
         data = data.concat(info)
         data = data.concat(build)
         data = data.concat(research)
